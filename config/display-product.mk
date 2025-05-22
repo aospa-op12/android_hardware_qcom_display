@@ -194,7 +194,7 @@ SOONG_CONFIG_qtidisplay := drmpp headless llvmsa \
                            default var1 var2 var3 llvmcov  \
                            composer_version smmu_proxy \
                            ubwcp_headers sixzone_version
-SOONG_CONFIG_qtidisplay += udfps
+SOONG_CONFIG_qtidisplay += udfps oplus_udfps
 SOONG_CONFIG_qtidisplay += pxlw_vendor_namespace pxlw_hw_iris7
 
 # Soong Values
