@@ -477,6 +477,7 @@ HWC3::Error HWCDisplayBuiltIn::SetColorMode(ColorMode mode) {
 }
 
 HWC3::Error HWCDisplayBuiltIn::SetColorModeWithRenderIntent(ColorMode mode, RenderIntent intent) {
+  const auto pxlw_intent = GetPxlwP3RenderIntent(mode, intent);
   auto status = color_mode_->CacheColorModeWithRenderIntent(mode, intent);
   if (status != HWC3::Error::None) {
     DLOGE("failed for mode = %d intent = %d", mode, intent);
@@ -492,7 +493,7 @@ HWC3::Error HWCDisplayBuiltIn::SetColorModeWithRenderIntent(ColorMode mode, Rend
     reinterpret_cast<pxlw::PxlwSoftirisWrapper *>(iris_wrapper)
 #endif
         ->SetColorModeWithRenderIntent(0, 0, static_cast<int32_t>(mode),
-                                       static_cast<int32_t>(intent));
+                                       static_cast<int32_t>(pxlw_intent));
   }
 #endif
 
