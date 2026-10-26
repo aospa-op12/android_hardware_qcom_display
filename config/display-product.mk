@@ -201,6 +201,7 @@ SOONG_CONFIG_qtidisplay := drmpp headless llvmsa \
                            ubwcp_headers sixzone_version
 SOONG_CONFIG_qtidisplay += udfps samsung_udfps oplus_udfps
 SOONG_CONFIG_qtidisplay += pxlw_hw_iris7 pxlw_vendor_namespace
+SOONG_CONFIG_qtidisplay += pxlw_color_config_include
 
 # Soong Values
 SOONG_CONFIG_qtidisplay_drmpp := true
