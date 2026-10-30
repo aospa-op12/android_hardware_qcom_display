@@ -1497,20 +1497,27 @@ void HWDeviceDRM::SetupAtomic(Fence::ScopedRef &scoped_ref, HWLayersInfo *hw_lay
 
 #ifdef OPLUS_FINGERPRINT_MASK
   if (IsPrimaryDisplay()) {
-    uint32_t mask_state = 0;
+    // The client derives the mask from the complete HWC layer set (see
+    // HWCDisplay::BuildLayerStack), so it no longer depends on the UDFPS layers being picked
+    // for device composition. Keep scanning the hardware layers as a fallback for clients
+    // that do not provide the mask.
+    uint32_t mask_state = hw_layers_info->flags.fod_mask;
 
-    for (uint32_t i = 0; i < hw_layer_count; i++) {
-      const std::string &name = hw_layers_info->hw_layers[i].layer_name;
-      if (name.find(UDFPS_DIM_LAYER_NAME) != std::string::npos) {
-        mask_state |= OPLUS_OFP_PROPERTY_DIM_LAYER;
-      } else if (name.find(UDFPS_TOUCHED_LAYER_NAME) != std::string::npos) {
-        mask_state |= OPLUS_OFP_PROPERTY_FINGERPRESS_LAYER;
+    if (!mask_state) {
+      for (uint32_t i = 0; i < hw_layer_count; i++) {
+        const std::string &name = hw_layers_info->hw_layers[i].layer_name;
+        if (name.find(UDFPS_DIM_LAYER_NAME) != std::string::npos) {
+          mask_state |= OPLUS_OFP_PROPERTY_DIM_LAYER;
+        } else if (name.find(UDFPS_TOUCHED_LAYER_NAME) != std::string::npos) {
+          mask_state |= OPLUS_OFP_PROPERTY_FINGERPRESS_LAYER;
+        }
       }
     }
 
     if (current_mask_state_ != mask_state) {
       current_mask_state_ = mask_state;
       drm_atomic_intf_->Perform(DRMOps::CONNECTOR_SET_FINGERPRINT_MASK, token_.conn_id, mask_state);
+      DLOGI("Display:%d UDFPS fingerprint mask = %u", display_id_, mask_state);
     }
   }
 #endif
